@@ -1,18 +1,26 @@
 #library(quantmod)
 #getSymbols("IBM", src="yahoo")
-abner_path <- "~/Desktop/111-1 MAB/CNN thesis/src/IBM.RDS"
+abner_path <- "/Users/abnerteng/GitHub/Stock_image_analysis/DataFile/IBM.RDS"
 library(png)
 IBM <- readRDS(abner_path)
-
+dfma <- tail(IBM[,1:5], 40)
+dfma <- as.data.frame(dfma)
 df = tail(IBM[,1:5], 20)
 d = as.data.frame(df)
 row.names(d) = NULL
 colnames(d) = c("Open","High","Low","Close","Volume")
-
+ma_days <- 20
+ma <- array(0, ma_days)
+for (i in ma_days:nrow(dfma))
+{
+  ma[i] <- mean(dfma$IBM.Close[(i-ma_days+1):(i)])
+}
+ma <- ma[21:40]
+d$ma <- ma
 plot_ohlc = function(d,filename="plot_new.png") {
-png(filename,width=60,height=45+(45/3)) # +1 pixel for the line that separates price and volume charts
+png(filename,width=60,height=48+(48/4)) # +1 pixel for the line that separates price and volume charts
 layout(matrix(1:2,2,1),
-       heights=c(4,1))    # the ratio between price and volume chart is 60:15
+       heights=c(4,1))    # the ratio between price and volume chart is 48:12
 par(mar=c(0,0,0,0),
     bg="black",
     fg="white",
@@ -29,6 +37,8 @@ segments(x.pos,d$Low,x.pos,d$High)
 segments(x.pos,d$Close,x.pos+1,d$Close)
 # draw OPEN notch
 segments(x.pos-1,d$Open,x.pos,d$Open)
+# draw MA line
+segments(x.pos-1, d$ma, x.pos+1, d$ma)
 # add Volume
 plot.new()
 plot.window(xlim=c(0,59),
@@ -44,6 +54,5 @@ dev.off()
 a = readPNG("plot_new.png")
 print(a)
 View(a[,,1])
-
 
 
