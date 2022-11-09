@@ -1,9 +1,10 @@
-n <- 199 ## number of small data
-for (i in 1:n){
-  dat_path <- paste0("/Users/abnerteng/Desktop/stock/split_data_10025/10025_split",i,".csv")
+library(png)
+n <- 289 ## number of small data
+for (i in 0:n){
+  dat_path <- paste0("/Users/abnerteng/Desktop/stock/split_data_10032/10032_split",i,".csv")
   d <- read.csv(dat_path)
 
-  plot_ohlc = function(d,filename=paste0("/Users/abnerteng/Desktop/stock_fig/10025/plot_10025-",i,".png")) {
+  plot_ohlc = function(d,filename=paste0("/Users/abnerteng/Desktop/stock_fig/10032/plot_10032-",i,".png")) {
     png(filename,width=60,height=48+(48/4)) # +1 pixel for the line that separates price and volume charts
     layout(matrix(1:2,2,1),
           heights=c(4,1))    # the ratio between price and volume chart is 48:12
@@ -36,7 +37,7 @@ for (i in 1:n){
   plot_ohlc(d)
   dev.off()
 
-  a = readPNG(paste0("/Users/abnerteng/Desktop/stock_fig/10025/plot_10025-",i,".png"))
+  a = readPNG(paste0("/Users/abnerteng/Desktop/stock_fig/10032/plot_10032-",i,".png"))
   print(a)
   View(a[,,1])
 }
