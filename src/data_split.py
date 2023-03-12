@@ -1,51 +1,68 @@
-# %%
 import pandas as pd
 import numpy as np
 import os
 import sys
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
-# %%
-datpath = '/Users/abnerteng/Desktop/stock/full_data'
-above_path = os.path.abspath(os.path.join(datpath, ".."))
-test = pd.read_csv(datpath + '/dat10001.csv')
-print(test.tail())
+from os import listdir
 
-## how to deal with NaN value??
-## after dealing with NaN value, separate with every month.
-## plot 20k data every one month.
-# %%
-test.isnull().values.any()
-test.isnull().sum().sum()
-nan = test['DlyClose'].isnull()
-nan = pd.DataFrame(nan)
-print(nan[(nan['DlyClose'] == True) & (nan['DlyClose'].shift(-1) == False)])
-# %%
-test.drop(['Unnamed: 0'], axis=1, inplace=True)
-price_dt = test[['PERMNO', 'DlyCalDt', 'DlyVol', 'DlyClose', 'DlyLow', 'DlyHigh', 'DlyOpen']]
-price_dt.columns = ['PERMNO', 'Day', 'Volume', 'Close', 'Low', 'High', 'Open']
-price_dt['MA'] = price_dt['Close'].rolling(window=20).mean()
-price_dt[['m', 'd', 'y']] = price_dt.Day.str.split("/", expand = True)
-price_dt.to_csv(above_path + '/recolumn_data/price_dt_10001.csv', index = False)
-# %%[markdown]
-## Do not edit codes above
-# %%
-df = pd.read_csv(above_path + '/recolumn_data/price_dt_10001.csv')
+datpath = '/Users/abnerteng/Desktop/CNN/dat/WRDS_split_data'
+abvpath = '/Users/abnerteng/Desktop/CNN/dat'
+recolumnpath = '/Users/abnerteng/Desktop/CNN/dat/recolumn_data'
+list_ = listdir(datpath)
+"""
+how to deal with NaN value?? ==> ignore
+after dealing with NaN value, separate with every month.
+plot 20k data every one month.
+"""
+## test.isnull().values.any()
+## test.isnull().sum()
+## nan = test['DlyClose'].isnull()
+## nan = pd.DataFrame(nan)
+## print(nan[(nan['DlyClose'] == True) & (nan['DlyClose'].shift(-1) == False)])
 
-# %%
-##df[['m', 'd', 'y']] = df.Day.str.split("/", expand = True)
-# %%
-def save_csv(df):
-    df = df[-20: ]
-    df.to_csv(above_path + '/' + str(df['PERMNO'].iloc[0]) + '/' + df['y'].iloc[0] + df['m'].iloc[0] + '.csv', index = False)
-df.groupby(['y', 'm']).apply(save_csv)
-# %%
-##def split_dataframe(df, chunk_size = 20):
+class recolumn():
+    def __init__(self, datpath, list_, abvpath, recolumnpath):
+        self.datpath = datpath
+        self.list_ = list_
+        self.abvpath = abvpath
+        self.recolumnpath = recolumnpath
+
+    def process(self):
+        for i in range(len(self.list_)):
+            df = pd.read_csv(self.datpath + '/' + self.list_[i])
+            price_dt = df[['PERMNO', 'DlyCalDt', 'DlyVol', 'DlyClose', 'DlyLow', 'DlyHigh', 'DlyOpen']]
+            price_dt.columns = ['ID', 'Day', 'Volume', 'Close', 'Low', 'High', 'Open']
+            price_dt['MA'] = price_dt['Close'].rolling(window=20).mean()
+            price_dt['Day'] = pd.to_datetime(price_dt['Day'], format = '%m/%d/%Y')
+            price_dt['y'] = price_dt['Day'].dt.year
+            price_dt['m'] = price_dt['Day'].dt.month
+            price_dt['d'] = price_dt['Day'].dt.day
+            price_dt.to_csv(self.recolumnpath + '/' + self.list_[i], index = False)
+
+recolumn(datpath, list_, abvpath, recolumnpath).process()
+"""
+Do not edit codes above
+"""
+
+## df = pd.read_csv(datpath + '/recolumn_data/AAPL.csv')
+
+## def save_csv(df):
+##     df = df[-20: ]
+##     df.to_csv(datpath + '/' + str(df['Ticker'].iloc[0]) + '/' + df['y'].iloc[0] + df['m'].iloc[0] + '.csv', index = False)
+## df.groupby(['y', 'm']).apply(save_csv)
+
+## def save_csv(df):
+##     if df['m'].iloc[0] >= 10:
+##         df.to_csv(datpath + '/' + str(df['Ticker'].iloc[0]) + '/' + str(df['y'].iloc[0]) + str(df['m'].iloc[0]) + '.csv', index = False)
+##     else:
+##         df.to_csv(datpath + '/' + str(df['Ticker'].iloc[0]) + '/' + str(df['y'].iloc[0]) + '0' + str(df['m'].iloc[0]) + '.csv', index = False)
+## df.groupby(['y', 'm']).apply(save_csv)
+
+## def split_dataframe(df, chunk_size = 20):
 ##    chunks = list()
 ##    num_chunks = len(df) // chunk_size + 1
 ##    for i in range(num_chunks):
 ##        chunks.append(df[i*chunk_size:(i+1)*chunk_size])
 ##    return chunks
-### %%
-##df_split = split_dataframe(full_data, chunk_size = 20)
-# %%
+
+## df_split = split_dataframe(full_data, chunk_size = 20)
