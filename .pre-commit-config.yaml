@@ -1,0 +1,26 @@
+repos:
+-   repo: https://github.com/PyCQA/pylint
+    rev: v2.15.5
+    hooks:
+    -   id: pylint
+        name: pylint
+        entry: pylint
+        language: system
+        types: [python]
+        args:
+          [
+            "-rn", # Only display messages
+            "-sn", # Don't display the score
+            "--max-line-length=120", # Set the max line length
+            "--disable=too-many-arguments"
+          ]
+-   repo: https://github.com/Lucas-C/pre-commit-hooks-bandit
+    rev: v1.0.4
+    hooks:
+    -   id: python-bandit-vulnerability-check
+        args: [-l, --recursive, -x, tests]
+        files: .py$
+-   repo: https://github.com/asottile/reorder_python_imports
+    rev: v1.6.1
+    hooks:
+    -   id: reorder-python-imports
