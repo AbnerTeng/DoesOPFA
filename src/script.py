@@ -277,13 +277,78 @@ print(sum(sub_data_ym['weight'] * sub_data_ym['shifted_ret']))
 data = pd.read_parquet("../dat/monthly_data.parquet")
 # data['P_KJX_BL'].replace("None", np.nan, inplace=True)
 # %%
-data.head()
+import numpy as np
+import pandas as pd
+from tqdm import tqdm
+from utils.data_utils import shift_prob
+
+dat = pd.read_parquet("../dat/monthly_data.parquet").replace(["None", "nan"], np.nan)
+
+prob_cols = [col for col in dat.columns if col.split("_")[0] == "P"]
+for col in tqdm(prob_cols[:-2]):
+    dat.loc[dat[col].notna(), col] = \
+        dat.loc[dat[col].notna(), col].apply(
+            lambda x: [
+                float(val) for val in x.strip('[]').split()
+            ]
+        )
+    dat.loc[dat[col].notna(), col] = \
+        dat.loc[dat[col].notna(), col].apply(
+            lambda lst: lst[1]
+        )
+
+dat.drop(
+    columns=['mktcap', 'bm', 'SMB', 'HML', 'VOL'],
+    inplace=True
+)
+
+_cls = ['SH', 'SM', 'SL', 'BH', 'BM', 'BL']
+for i in _cls:
+    for j in _cls:
+        if i != j:
+            dat.loc[dat['SMB_HML'] == i, f'P_KJX_{j}'] = \
+                dat.loc[dat[f'P_KJX_{i}_by{j}'].notna(), f'P_KJX_{i}_by{j}']
+
+dat = dat[
+    [
+        'PERMNO', 'date', 'SMB_HML', 'RET', 'P_KJX_SH', 'P_KJX_SM',
+        'P_KJX_SL', 'P_KJX_BH', 'P_KJX_BM', 'P_KJX_BL', 'P_KJX_ALL', 'P_MC_H', 'P_MC_L'
+    ]
+]
+
+nadat = dat.dropna()
+for col in nadat.columns:
+    if "P_KJX" in col:
+        nadat.rename(
+            columns={col: f"{col}(y=1)"},
+            inplace=True
+        )
+    elif "P_MC" in col:
+        nadat.rename(
+            columns={col: f"P_MC(y={col.split('_')[-1]})"},
+            inplace=True
+        )
+    else:
+        pass
+
+for col in tqdm(nadat.columns):
+    if col.startswith("P_"):
+        nadat[col] = shift_prob(nadat, col)
+
+nadat[['date', 'RET', 'P_MC(y=L)']] = nadat[['date', 'RET', 'P_MC(y=L)']].astype(float)
+nadat.reset_index(drop=True, inplace=True)
+nadat.to_parquet("../dat/mdl_output.parquet")
 # %%
 import pandas as pd
-df = pd.DataFrame(
-    {
-        'a': [1, 2, 3, 4, 5],
-        'b': [1, 3, 5, 7, 9]
-    }
+
+label = pd.read_csv("../label/test_label_multi_10_v2.csv", index_col=0)
+ff3_class = pd.read_parquet("../dat/ff3_class.parquet")
+# %%
+df = pd.merge(
+    label, ff3_class[['fig_name', 'SMB_HML']],
+    on="fig_name", how="inner"
 )
+df.drop_duplicates(subset=["fig_name"], inplace=True)
+# %%
+df.to_csv("../label/test_label_multi_10_v3.csv")
 # %%

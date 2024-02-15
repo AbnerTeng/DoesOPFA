@@ -1,0 +1,7 @@
+# INITIAL SETITINGS
+device: mps
+
+# MODEL CONFIG
+n_epochs: 10
+patience: 5
+batch_size: 128

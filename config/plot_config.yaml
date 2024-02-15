@@ -1,0 +1,183 @@
+org_ff3_equal:
+  - P_KJX_SH_equal_weight
+  - P_KJX_SM_equal_weight
+  - P_KJX_SL_equal_weight
+  - P_KJX_BH_equal_weight
+  - P_KJX_BM_equal_weight
+  - P_KJX_BL_equal_weight
+
+org_ff3_value:
+  - P_KJX_SH_value_weight
+  - P_KJX_SM_value_weight
+  - P_KJX_SL_value_weight
+  - P_KJX_BH_value_weight
+  - P_KJX_BM_value_weight
+  - P_KJX_BL_value_weight
+
+org_ff3_volume:
+  - P_KJX_SH_vol_weight
+  - P_KJX_SM_vol_weight
+  - P_KJX_SL_vol_weight
+  - P_KJX_BH_vol_weight
+  - P_KJX_BM_vol_weight
+  - P_KJX_BL_vol_weight
+
+bySH_equal:
+  - P_KJX_SH_equal_weight
+  - P_KJX_SM_bySH_equal_weight
+  - P_KJX_SL_bySH_equal_weight
+  - P_KJX_BH_bySH_equal_weight
+  - P_KJX_BM_bySH_equal_weight
+  - P_KJX_BL_bySH_equal_weight
+
+bySM_equal:
+  - P_KJX_SM_equal_weight
+  - P_KJX_SH_bySM_equal_weight
+  - P_KJX_SL_bySM_equal_weight
+  - P_KJX_BH_bySM_equal_weight
+  - P_KJX_BM_bySM_equal_weight
+  - P_KJX_BL_bySM_equal_weight
+
+bySL_equal:
+  - P_KJX_SL_equal_weight
+  - P_KJX_SM_bySL_equal_weight
+  - P_KJX_SH_bySL_equal_weight
+  - P_KJX_BH_bySL_equal_weight
+  - P_KJX_BM_bySL_equal_weight
+  - P_KJX_BL_bySL_equal_weight
+
+byBH_equal:
+  - P_KJX_BH_equal_weight
+  - P_KJX_BM_byBH_equal_weight
+  - P_KJX_BL_byBH_equal_weight
+  - P_KJX_SH_byBH_equal_weight
+  - P_KJX_SM_byBH_equal_weight
+  - P_KJX_SL_byBH_equal_weight
+
+byBM_equal:
+  - P_KJX_BM_equal_weight
+  - P_KJX_BH_byBM_equal_weight
+  - P_KJX_BL_byBM_equal_weight
+  - P_KJX_SH_byBM_equal_weight
+  - P_KJX_SM_byBM_equal_weight
+  - P_KJX_SL_byBM_equal_weight
+
+byBL_equal:
+  - P_KJX_BL_equal_weight
+  - P_KJX_BM_byBL_equal_weight
+  - P_KJX_BH_byBL_equal_weight
+  - P_KJX_SH_byBL_equal_weight
+  - P_KJX_SM_byBL_equal_weight
+  - P_KJX_SL_byBL_equal_weight
+
+bySH_value:
+  - P_KJX_SH_value_weight
+  - P_KJX_SM_bySH_value_weight
+  - P_KJX_SL_bySH_value_weight
+  - P_KJX_BH_bySH_value_weight
+  - P_KJX_BM_bySH_value_weight
+  - P_KJX_BL_bySH_value_weight
+
+bySM_value:
+  - P_KJX_SM_value_weight
+  - P_KJX_SH_bySM_value_weight
+  - P_KJX_SL_bySM_value_weight
+  - P_KJX_BH_bySM_value_weight
+  - P_KJX_BM_bySM_value_weight
+  - P_KJX_BL_bySM_value_weight
+
+bySL_value:
+  - P_KJX_SL_value_weight
+  - P_KJX_SM_bySL_value_weight
+  - P_KJX_SH_bySL_value_weight
+  - P_KJX_BH_bySL_value_weight
+  - P_KJX_BM_bySL_value_weight
+  - P_KJX_BL_bySL_value_weight
+
+byBH_value:
+  - P_KJX_BH_value_weight
+  - P_KJX_BM_byBH_value_weight
+  - P_KJX_BL_byBH_value_weight
+  - P_KJX_SH_byBH_value_weight
+  - P_KJX_SM_byBH_value_weight
+  - P_KJX_SL_byBH_value_weight
+
+byBM_value:
+  - P_KJX_BM_value_weight
+  - P_KJX_BH_byBM_value_weight
+  - P_KJX_BL_byBM_value_weight
+  - P_KJX_SH_byBM_value_weight
+  - P_KJX_SM_byBM_value_weight
+  - P_KJX_SL_byBM_value_weight
+
+byBL_value:
+  - P_KJX_BL_value_weight
+  - P_KJX_BM_byBL_value_weight
+  - P_KJX_BH_byBL_value_weight
+  - P_KJX_SH_byBL_value_weight
+  - P_KJX_SM_byBL_value_weight
+  - P_KJX_SL_byBL_value_weight
+
+bySH_volume:
+  - P_KJX_SH_vol_weight
+  - P_KJX_SM_bySH_vol_weight
+  - P_KJX_SL_bySH_vol_weight
+  - P_KJX_BH_bySH_vol_weight
+  - P_KJX_BM_bySH_vol_weight
+  - P_KJX_BL_bySH_vol_weight
+
+bySM_volume:
+  - P_KJX_SM_vol_weight
+  - P_KJX_SH_bySM_vol_weight
+  - P_KJX_SL_bySM_vol_weight
+  - P_KJX_BH_bySM_vol_weight
+  - P_KJX_BM_bySM_vol_weight
+  - P_KJX_BL_bySM_vol_weight
+
+bySL_volume:
+  - P_KJX_SL_vol_weight
+  - P_KJX_SM_bySL_vol_weight
+  - P_KJX_SH_bySL_vol_weight
+  - P_KJX_BH_bySL_vol_weight
+  - P_KJX_BM_bySL_vol_weight
+  - P_KJX_BL_bySL_vol_weight
+
+byBH_volume:
+  - P_KJX_BH_vol_weight
+  - P_KJX_BM_byBH_vol_weight
+  - P_KJX_BL_byBH_vol_weight
+  - P_KJX_SH_byBH_vol_weight
+  - P_KJX_SM_byBH_vol_weight
+  - P_KJX_SL_byBH_vol_weight
+
+byBM_volume:
+  - P_KJX_BM_vol_weight
+  - P_KJX_BH_byBM_vol_weight
+  - P_KJX_BL_byBM_vol_weight
+  - P_KJX_SH_byBM_vol_weight
+  - P_KJX_SM_byBM_vol_weight
+  - P_KJX_SL_byBM_vol_weight
+
+byBL_volume:
+  - P_KJX_BL_vol_weight
+  - P_KJX_BM_byBL_vol_weight
+  - P_KJX_BH_byBL_vol_weight
+  - P_KJX_SH_byBL_vol_weight
+  - P_KJX_SM_byBL_vol_weight
+  - P_KJX_SL_byBL_vol_weight
+
+SH_diff_mdl:
+  - P_KJX_SH_equal_weight
+  - P_KJX_SH_bySM_equal_weight
+  - P_KJX_SH_bySL_equal_weight
+  - P_KJX_SH_byBH_equal_weight
+  - P_KJX_SH_byBM_equal_weight
+  - P_KJX_SH_byBL_equal_weight
+
+SM_diff_mdl:
+  - P_KJX_SM_equal_weight
+  - P_KJX_SM_bySH_equal_weight
+  - P_KJX_SM_bySL_equal_weight
+  - P_KJX_SM_byBH_equal_weight
+  - P_KJX_SM_byBM_equal_weight
+  - P_KJX_SM_byBL_equal_weight 
