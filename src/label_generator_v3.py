@@ -8,7 +8,7 @@ from argparse import ArgumentParser
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-from .utils import shift
+from .utils.data_utils import shift
 warnings.filterwarnings('ignore')
 
 
@@ -92,6 +92,18 @@ class LabelGenerator:
         return filtered_df
 
 
+def merge_class(label: pd.DataFrame, _class: pd.DataFrame) -> pd.DataFrame:
+    """
+    merge label and class
+    """
+    df = pd.merge(
+        label, _class[['fig_name', 'SMB_HML']],
+        how="inner", on="fig_name"
+    )
+    df.drop_duplicates(subset=["fig_name"], inplace=True)
+    return df
+
+
 def parse_args() -> ArgumentParser:
     """
     parsing arguments
@@ -106,8 +118,10 @@ def parse_args() -> ArgumentParser:
 if __name__ == "__main__":
     args = parse_args()
     ret_data = pd.read_parquet(args.dat_path)
+    ff3_class = pd.read_csv("dat/ff3_class.csv")
     generator = LabelGenerator(label_type=args.label_type)
     full_data = generator.gen_label(ret_data)
     fig_label = generator.get_label(data=full_data, fig_path=f"dat/{args.dat_type}/")
+    fig_label = merge_class(fig_label, ff3_class)
     fig_label.to_csv(f"label/{args.dat_type}_label_{args.label_type}_v2.csv")
     

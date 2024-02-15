@@ -10,11 +10,12 @@ import pandas as pd
 from tqdm import tqdm
 import torch
 import torch.nn as nn
+import torch.nn.init as init
 from torchvision import transforms
 from torch.utils.data import Dataset, DataLoader, random_split
 import matplotlib.pyplot as plt
 from PIL import Image
-from .utils import filter_imgs, filter_files
+from .utils.data_utils import filter_imgs, filter_files
 from .trans_label import to_dataframe, merge_to_ret_df
 warnings.filterwarnings("ignore")
 plt.style.use("ggplot")
@@ -114,6 +115,10 @@ class ConvNetForBin(nn.Module):
             nn.Linear(64, 2),
             nn.Softmax()
         )
+        for layer in self.cnn:
+            if isinstance(layer, nn.Conv2d):
+                init.xavier_normal_(layer.weight)
+                init.constant_(layer.bias, 0.0)
 
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -299,6 +304,7 @@ class TrainSession:
             imgs = self.ts_loader.dataset.imgs
         predicted_label_df = to_dataframe(pred_label, imgs)
         ret_df = merge_to_ret_df(predicted_label_df, ret_df)
+
         if args.labeler == "bin":
             if args.use_spec_mdl:
                 ret_df.rename(
@@ -306,13 +312,27 @@ class TrainSession:
                 )
             else:
                 ret_df.rename(columns={"label": f"P_KJX_{args.cls}"}, inplace=True)
+
         elif args.labeler == "tri":
             ret_df.rename(columns={"label": f"P_FF3_{args.cls}"}, inplace=True)
-        elif args.labeler == "multi-h":
-            ret_df.rename(columns={"label": "P_MC_H"}, inplace=True)
-        elif args.labeler == "multi-l":
-            ret_df.rename(columns={"label": "P_MC_L"}, inplace=True)
-        print(ret_df[ret_df[f"P_KJX_{args.cls}"].notna()])
+
+        elif args.labeler.split("-")[0] == "multi":
+            if args.labeler.split("-")[1] == "h":
+                if args.use_spec_mdl:
+                    ret_df.rename(
+                        columns={"label": f"P_MC_H_{args.cls}_by{args.spec_mdl}"}, inplace=True
+                    )
+                else:
+                    ret_df.rename(columns={"label": f"P_MC_H_{args.cls}"}, inplace=True)
+            elif args.labeler.split("-")[1] == "l":
+                if args.use_spec_mdl:
+                    ret_df.rename(
+                        columns={"label": f"P_MC_L_{args.cls}_by{args.spec_mdl}"}, inplace=True
+                    )
+                else:
+                    ret_df.rename(columns={"label": f"P_MC_L_{args.cls}"}, inplace=True)
+
+        print(ret_df[ret_df[ret_df.columns[-1]].notna()])
         print(ret_df.shape)
         # elif args.labeler == "ova-h":
         #     ret_df.rename(columns={"label": "P_OVA_H"}, inplace=True)
@@ -326,7 +346,14 @@ class TrainSession:
         test session
         """
         if args.use_spec_mdl:
-            self.model.load_state_dict(torch.load(f"model/bin_{args.spec_mdl}_best.ckpt"))
+            if args.mdl == "bin":
+                self.model.load_state_dict(
+                    torch.load(f"model/bin_{args.spec_mdl}_best.ckpt")
+                )
+            elif args.mdl == "multi_10":
+                self.model.load_state_dict(
+                    torch.load(f"model/multi_10_{args.spec_mdl}_best.ckpt")
+                )
         else:
             self.model.load_state_dict(torch.load(f"model/{self.cfg['_exp_name']}_best.ckpt"))
         self.model.eval()
@@ -338,12 +365,11 @@ class TrainSession:
             for batch in tqdm(loader):
                 imgs, _ = batch
                 outputs = self.model(imgs.to(self.device))
-                # predicted = np.argmax(outputs.cpu().data.numpy(), axis=1) ## label
                 if args.labeler == "bin":
-                    predicted = outputs.cpu().data.numpy() ## probability
+                    predicted = outputs.cpu().data.numpy()
                     predicted_label.extend(predicted)
                 elif args.labeler == "tri":
-                    predicted = outputs.cpu().data.numpy() ## probability
+                    predicted = outputs.cpu().data.numpy()
                     predicted_label.extend(predicted)
                 elif args.labeler == "multi-h":
                     h_predicted = outputs.cpu().data.numpy()[:, -1]
@@ -420,8 +446,8 @@ if __name__ == "__main__":
     ## TODO: Has not setup config file yet
     train_dataset_dir = f"{os.getcwd()}/dat/train/"
     test_dataset_dir = f"{os.getcwd()}/dat/test/"
-    train_label_dir = f"{os.getcwd()}/label/train_label_{_args.mdl}_v2.csv"
-    test_label_dir = f"{os.getcwd()}/label/test_label_{_args.mdl}_v2.csv"
+    train_label_dir = f"{os.getcwd()}/label/train_label_{_args.mdl}_v3.csv"
+    test_label_dir = f"{os.getcwd()}/label/test_label_{_args.mdl}_v3.csv"
     train_dataset = StockDataset(
         train_dataset_dir, train_label_dir, transform, _args.add_noise, _args.cls
     )

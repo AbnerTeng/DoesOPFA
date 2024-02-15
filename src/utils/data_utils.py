@@ -60,20 +60,41 @@ def shift(data: pd.DataFrame, cols: str) -> list:
     return list(chain(*shifted_tot))
 
 
-def calculate_sharpe(path: str, rf: float=0.00) -> None:
+def shift_prob(data: pd.DataFrame, cols: str) -> list:
+    """
+    shift the probability by past one month
+    """
+    comp_gp = data.groupby("PERMNO")
+    shifted_tot = []
+    for comp in comp_gp.groups.keys():
+        subsample = comp_gp.get_group(comp)
+        shifted = [0] + list(subsample[cols][:-1])
+        shifted_tot.append(shifted)
+    return list(chain(*shifted_tot))
+
+
+def calculate_sharpe(data: pd.DataFrame, col: str, rf: float=0.00) -> pd.DataFrame:
     """
     Calculate Annual Sharpe Ratio
     
     SR_i = (E(R_i) - R_f) / std(R_i) * sqrt(12)
     """
-    data = pd.read_csv(path, encoding="utf-8")
-    ret_dat = data.iloc[:, 1:].diff().iloc[1:-1, :]
-    sharpe_df = ((ret_dat.mean() - rf)/ ret_dat.std()) * np.sqrt(12)
-    sharpe_df = sharpe_df.to_frame(name="Annual Sharpe Ratio")
-    sharpe_df.to_csv("dat/sharpe_ratio.csv")
+    if col == "ALL":
+        sharpe_df = (
+            (data.mean(numeric_only=True) - rf)/ data.std(numeric_only=True)
+        ) * np.sqrt(12)
+        sharpe_df = sharpe_df.to_frame(name="Annual Sharpe Ratio")
+        sharpe_df.to_csv("dat/sharpe_ratio.csv")
+        return sharpe_df
+    else:
+        sharpe_df = (
+            (data[col].mean() - rf)/ data[col].std()
+        ) * np.sqrt(12)
+        print(f"Sharpe Ratio for {col}: {sharpe_df}")
+        return sharpe_df
 
 
-def get_alpha(ret_path: str, ff5_path: str) -> None:
+def get_alpha(ret_data: pd.DataFrame, ff5_path: str) -> None:
     """
     Construct Fama-French 5 factors model and get alpha
     
@@ -84,14 +105,19 @@ def get_alpha(ret_path: str, ff5_path: str) -> None:
                   
     The return is a_i
     """
-    ret_data = pd.read_csv(ret_path, encoding="utf-8")
     ff5_data = pd.read_csv(ff5_path, encoding="utf-8").rename(columns={"Unnamed: 0": "ym"})
     ff5_data = ff5_data[
-        (ff5_data["ym"] > 200101) & (ff5_data["ym"] < 202212)
+        (ff5_data["ym"] > 200012) & (ff5_data["ym"] < 202301)
     ].reset_index(drop=True)
-    rt = ret_data.iloc[:, 1:].diff().iloc[1:-1, :].reset_index(drop=True)
+    ret_data = ret_data.iloc[:, 1:].reset_index(drop=True)
     feats = ff5_data[["Mkt-RF", "SMB", "HML", "RMW", "CMA"]]
     feats = sm.add_constant(feats)
-    model = sm.OLS(rt, feats).fit()
-    alpha = model.params.iloc[0, :]
+    model = sm.OLS(ret_data, feats).fit()
+    alpha = pd.DataFrame(
+        {
+            "class": ret_data.columns,
+            "alpha": model.params.iloc[0, :]
+        },
+    )
+    print(alpha)
     alpha.to_csv("dat/alpha.csv")
