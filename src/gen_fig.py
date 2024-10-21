@@ -116,12 +116,16 @@ class FigGenerator:
         return full_img, full_img.size
 
 
-    def generate_single(self, args: Namespace) -> None:
+    def generate_single(self, args: dict) -> None:
         """
         generate the images
         """
-        dates = np.ndarray(args.values())
-        permno_mask = self.array[:, 0] == args.keys()
+        if not isinstance(list(args.values())[0], np.ndarray):
+            dates = np.array(list(args.values())[0])
+        else:
+            dates = list(args.values())[0]
+
+        permno_mask = self.array[:, 0] == next(iter(args.keys()))
 
         for idx, date in track(enumerate(dates)):
             date_mask = self.array[:, 1] == date
@@ -142,10 +146,13 @@ class FigGenerator:
             prc_img, vol_img = self.plot_sticks(subarray)
             full_img, _ = self.concat(prc_img, vol_img)
 
+            if "fig/img" not in os.listdir():
+                os.makedirs("fig/img")
+
             if f"{args.keys()}_{date}.png" not in os.listdir("fig/img"):
                 full_img.save(f"fig/img/{args.keys()}_{date}.png")
 
-        return f"PEMRNO: {args.keys()} finished!"
+        return f"PEMRNO: {next(iter(args.keys()))} finished!"
 
 
     def generate(self) -> None:
@@ -167,8 +174,8 @@ def parsing_args() -> Namespace:
     parser = ArgumentParser()
     parser.add_argument(
         "--do_sample",
-        type=bool,
         action="store_true",
+        default=True,
         help="whether to sample the data"
     )
     return parser.parse_args()
@@ -184,7 +191,14 @@ if __name__ == "__main__":
             "dat/clean_data.parquet",
         )
 
+    print("loading data")
     prc_data = pd.read_parquet('dat/clean_data.parquet')
     fig_generator = FigGenerator(prc_data, do_sample=p_args.do_sample)
     print("start generating...")
-    fig_generator.generate()
+
+    # Use fig_generator.generate() to generate all the images
+
+    # fig_generator.generate()
+    fig_generator.generate_single(
+        {10010: ['199302', '199303']}
+    )  # example generator for single image

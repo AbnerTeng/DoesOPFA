@@ -7,6 +7,7 @@ from typing import Literal
 from itertools import chain
 
 from argparse import ArgumentParser, Namespace
+import gdown
 import numpy as np
 import pandas as pd
 from rich.progress import track
@@ -127,9 +128,23 @@ def parse_args() -> Namespace:
 
 if __name__ == "__main__":
     args = parse_args()
+
+    if not os.path.exists(args.dat_path):
+        gdown.download(
+            "https://drive.google.com/file/d/1TxzrOJx3tNtWkZk0P2OBqCyBTTEkAOV1/view?usp=sharing",
+            args.dat_path
+        )
+    if not os.path.exists("dat/ff3_class.parquet"):
+        gdown.download(
+            "https://drive.google.com/file/d/1NcM6tC_laUmXF67d4EJRUOLf3b9rLLud/view?usp=sharing",
+            "dat/ff3_class.parquet"
+        )
+
     ret_data = pd.read_parquet(args.dat_path)
     ff3_class = pd.read_parquet("dat/ff3_class.parquet")
     generator = LabelGenerator(label_type=args.label_type)
-    fig_label = generator.get_label(data=ret_data, fig_path=f"dat/{args.dat_type}/")
+    fig_label = generator.get_label(data=ret_data, fig_path=f"fig/img/{args.dat_type}/")
     fig_label = merge_class(fig_label, ff3_class)
-    fig_label.to_csv(f"label/{args.dat_type}_label_{args.label_type}_v2.csv")
+    print(fig_label.head())
+    print(fig_label.shape)
+    # fig_label.to_csv(f"label/{args.dat_type}_label_{args.label_type}_v2.csv")

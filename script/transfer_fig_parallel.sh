@@ -1,8 +1,8 @@
 #!/bin/bash
 
 figures_dir="fig/img"
-training_dir="img/train_t"
-testing_dir="img/test_t"
+training_dir="fig/img/train"
+testing_dir="fig/img/test"
 
 mkdir -p "$training_dir"
 mkdir -p "$testing_dir"

@@ -112,9 +112,6 @@ def shift(data: pd.DataFrame, cols: Union[str, List[str]]) -> list:
     comp_gp = data.groupby("PERMNO")
     shifted_tot = []
 
-    if isinstance(cols, str):
-        cols = [cols]
-
     for comp in comp_gp.groups.keys():
         subsample = comp_gp.get_group(comp)
         shifted = list(subsample[cols][1:]) + [0]
