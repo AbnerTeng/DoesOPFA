@@ -2,6 +2,7 @@
 dat/
 model/
 label/
+notebooks/
 
 src/script.py
 # Mac system files

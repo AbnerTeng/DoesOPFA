@@ -63,4 +63,8 @@ TBD
 
 ## Experiments
 
-TBD
+### Test the pre-trained models
+
+Instead of directly provide the model checkpoints, we use huggingface to store our models. You can download the model repo from [here](https://huggingface.co/Abner0803/multiclass-stock-cnn).
+
+After downloading the model repo, you can test the pre-trained models by running the command in the `README.md` of the model repo.
